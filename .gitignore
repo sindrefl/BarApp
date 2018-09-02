@@ -1,0 +1,8 @@
+.idea
+
+./mybarclient/.idea
+./mybarclient/node_modules
+
+
+./MyBarServer/.idea
+./MyBarServer/.mvn
