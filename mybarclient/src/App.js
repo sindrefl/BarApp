@@ -1,13 +1,19 @@
 import React, { Component } from 'react';
-import CocktailDashboard from './Containers/Main';
+import Main from './Containers/Main';
+
+
+
 import './css/App.css';
 
-class App extends Component {
+import {BrowserRouter as Router, Route, Link} from 'react-router-dom'
 
+class App extends Component {
   render() {
     return (
       <div className="App">
-        <CocktailDashboard />
+      <Router>
+        <Main />  
+      </Router>
       </div>
     );
   }

@@ -1,12 +1,10 @@
 package com.example.MyBarServer.Models
 
-import com.example.MyBarServer.Controllers.Ingredient
-
 enum class Glass{
-    HIGHBALL, COCKTAIL, LONGDRINK
+    HIGHBALL, COCKTAIL, ROCKS
 }
 
-data class Cocktail( var glass : Glass, var name : String,var ingredients : List<Ingredient> , var description :String){
-
-
+data class Cocktail(var name : String,var glass : Glass, var category: Category, var ingredients : List<Ingredient>, var amounts : List<String>, var description : String){
+    var alcoholic = true
+    var image_link : String? = null
 }

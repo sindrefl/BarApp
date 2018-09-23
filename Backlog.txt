@@ -1,0 +1,22 @@
+Things to do:
+
+Frontend
+Write script to populate database from javascript file
+Create animations for 5 bottles
+Login functionality - could be mocked first
+Modals to describe the batteri
+
+
+
+Statistics page, or integrated into my bar page - what type of drinks do you like? What types that are similar can you make with the ingredients you have?
+
+
+
+
+Backend
+
+
+
+Things done:
+
+Data dump of database to csv, could be sendt to snorre

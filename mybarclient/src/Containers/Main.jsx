@@ -1,42 +1,27 @@
 import React, {Component} from 'react';
-import logo from '../assets/logo.svg';
 import '../css/App.css';
 
 import Navbar from '../Components/Navbar'
 import DrinkCard from '../Components/DrinkCard'
 import RandomDrinkCard from '../Components/RandomDrink'
+import NewDrinkForm from '../Components/NewDrinkForm'
+
+import {Route, Switch} from 'react-router-dom'
+import CocktailDashboard from './CocktailDashboard';
+import CategoryList from './CategoryList';
+
+import MyBarPage from './MyBarPage'
 
 const axios = require('axios');
 
-class CocktailDashboard extends Component {
+class Main extends Component {
     constructor(props) {
         super(props);
         this.state = {
-            randomDrink: undefined
-            ,
-            categories: [
-                {
-                    name: "Category 1",
-                    picture: require("../assets/ThePlaceholder.jpg"),
-                    description: "category description"
-                }, {
-                    name: "Category 1",
-                    picture: require("../assets/ThePlaceholder.jpg"),
-                    description: "category description"
-                }, {
-                    name: "Category 1",
-                    picture: require("../assets/ThePlaceholder.jpg"),
-                    description: "category description"
-                }, {
-                    name: "Category 1",
-                    picture: require("../assets/ThePlaceholder.jpg"),
-                    description: "category description"
-                }, {
-                    name: "Category 1",
-                    picture: require("../assets/ThePlaceholder.jpg"),
-                    description: "category description"
-                }
-            ]
+            randomDrink: undefined,
+            categories: ['Hardcoded Long', 'Hardcoded Short', 'Mock'],
+            allDrinks: undefined,
+            glassTypes : []
         }
     }
 
@@ -44,48 +29,49 @@ class CocktailDashboard extends Component {
         axios
             .get('http://localhost:8080/random')
             .then((response) => {
-                console.log(response)
                 let drink = response.data;
                 this.setState({randomDrink: drink})
             })
             .catch(function (error) {
                 // handle error
                 console.log(error);
-            })
-            .then(function () {
-                // always executed
             });
+        axios
+            .get('http://localhost:8080/categories')
+            .then((response) => {
+                let categoryList = response.data;
+                this.setState({categories: categoryList});
+            })
+            .catch((error) => {
+                console.log(error)
+            });
+        axios
+            .get('http://localhost:8080/allDrinks')
+            .then((response) => {
+                this.setState({allDrinks: response.data})
+            });
+        axios.get('http://localhost:8080/glassTypes').then((response) => {
+            this.setState({glassTypes : response.data})
+        }).catch(error => {
+            console.log(error)
+        });
     }
 
     render() {
-        {console.log(this.state)}
-
         return (
-            
             <div className="Main">
-                <Navbar/>
-                {this.state.randomDrink && 
-                <RandomDrinkCard
-                    name={this.state.randomDrink.name}
-                    imageUrl={require("../assets/ThePlaceholder.jpg")}
-                    description={this.state.randomDrink.description}
-                    glass={this.state.randomDrink.glass}
-                    ingredients={this.state.randomDrink.ingredients} />
-                }
-                <div className="Grid-container">
-                    {this
-                        .state
-                        .categories
-                        .map((category, index) => <DrinkCard
-                            id={index}
-                            imageUrl={category.picture}
-                            description={category.description}
-                            name={category.name}/>)}
-                </div>
-
+            <Navbar glassTypes={this.state.glassTypes}/>
+           
+            <Switch>
+            <Route path="/" exact render= {() => <CocktailDashboard randomDrink={this.state.randomDrink} categories={this.state.categories} allDrinks={this.state.allDrinks}/>}></Route>
+            <Route path="/category/:name/:id" render={({match}) => <DrinkCard name={match.params.name} ></DrinkCard>} ></Route>
+            <Route path="/category/:name" render={({match}) => <CategoryList match={match} drinks={this.state.allDrinks}></CategoryList>}></Route>
+            <Route path="/home/bar" render={() => <MyBarPage></MyBarPage>}></Route>
+            </Switch>
             </div>
         );
     }
 }
 
-export default CocktailDashboard;
+
+export default Main;
