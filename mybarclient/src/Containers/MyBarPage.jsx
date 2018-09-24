@@ -11,11 +11,23 @@ class MyBarPage extends Component {
         super(props);
         this.state = {
             lastProps : this.props,
-            batteri : [{type : "Tequila", percent : 0.6}, {type: "Vodka", percent: 0.2}, {type:"Jug", percent : 0.7,}, {type:"Jug", percent: 0.2}, {type:"Jug", percent: 0.2}]
-            
+            batteri : [{type : "Vodka", percent : 0.6}, {type: "Gin", percent: 0.2}, {type:"Rum", percent : 0.7,}, {type:"Triple Sec", percent: 0.2}, {type:"Tequila", percent: 0.2}],
+            randomDrink : undefined
         }
     }
 
+    componentDidMount(){
+        axios
+            .get('http://localhost:8080/random')
+            .then((response) => {
+                let drink = response.data;
+                this.setState({randomDrink: drink})
+            })
+            .catch(function (error) {
+                // handle error
+                console.log(error);
+            });
+    }
 
     shouldComponentUpdate(nextProps,nextState){
         return(nextProps === this.state.lastProps);
@@ -23,15 +35,35 @@ class MyBarPage extends Component {
 
     render() {
         return <div>
+
+            YOUR BAR
+
         <div className="flex-horizontal-container">
-        {this.state.batteri.map((icon,index) => <div className="flex-horizontal bottleIcon"><FillUpComponent key={index.toString()} type={icon}></FillUpComponent></div>)}
+        {this.state.batteri.map((icon,index) => <div className="bottleIcon"><FillUpComponent key={index.toString()} type={icon}></FillUpComponent></div>)}
+        
         </div>
-        <div className="flex-horizontal-container around">
+        <div className="flex-horizontal-container">
         <div>
-               <RandomDrinkCard ingredients={["hello"]} description={"This will be a user-specific random drink"}></RandomDrinkCard>
+        {this.state.randomDrink && <RandomDrinkCard
+                    name={this.state.randomDrink.name}
+                    imageUrl={"http://localhost:8080/images/drinks/Whisky-Sour.jpg"}
+                    description={this.state.randomDrink.description}
+                    glass={this.state.randomDrink.glass}
+                    ingredients={this.state.randomDrink.ingredients}
+                    amounts ={this.state.randomDrink.amounts}
+                    />
+        }
         </div>
         <div>
-        <RandomDrinkCard ingredients={["hello"]} description={"This could either be some statistics or a suggestion based on previous drinks"}></RandomDrinkCard>
+            {this.state.randomDrink && <RandomDrinkCard
+                    name={this.state.randomDrink.name}
+                    imageUrl={"http://localhost:8080/images/drinks/Whisky-Sour.jpg"}
+                    glass={this.state.randomDrink.glass}
+                    ingredients={this.state.randomDrink.ingredients}
+                    amounts ={this.state.randomDrink.amounts}
+                    description={"This could either be some statistics or a suggestion based on previous drinks"}
+                    />
+        }
         </div>
              
         </div>

@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css?family=Indie+Flower');
+
 .App {
   text-align: center;
   background: rgb(212, 209, 209);
@@ -45,8 +47,9 @@
 
 .Random-Card-Container{
   margin: 2em;
-  display: inline-flex;
+  display: flex;
   flex-direction: column;
+  font-family: Indie Flower; 
 }
 
 .horizontal-list{
@@ -72,7 +75,6 @@
   align-self: center;
   opacity: 0.8;
   border-radius: 10%;
-  
   box-shadow: 5px 10px rgb(100,100,10,0.7);
 }
 
@@ -94,6 +96,13 @@
 
 .Drink-Card:hover{
   opacity: 1;
+}
+
+.small-text{
+  margin: 20px;
+  width: 200px;
+  height: 200px;
+
 }
 
 
@@ -144,17 +153,24 @@ cursor: pointer;
 
 .flex-horizontal-container{
   display: flex;
+  justify-content: space-around;
 }
 
 .flex-horizontal{
   flex-direction: column;
 }
 
-.bottleIcon{
-  height: 200px;
-  width: 200px;
-  margin: 100px;
+.flex-vertical{
+  flex-direction: row;
 }
-.around{
-  justify-content: space-around;
+
+.bottleIcon{
+  height: 15em;
+  width: 15em;
+  padding :1em;
+  margin: 1em;
+  justify-content: center;
+}
+.right{
+  float: right;
 }

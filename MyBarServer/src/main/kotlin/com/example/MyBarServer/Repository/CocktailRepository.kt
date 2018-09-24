@@ -3,7 +3,6 @@ package com.example.MyBarServer.Repository
 import com.example.MyBarServer.Models.Category
 import com.example.MyBarServer.Models.Cocktail
 import com.example.MyBarServer.Models.Glass
-import com.example.MyBarServer.Models.Ingredient
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate
@@ -15,7 +14,7 @@ import org.springframework.jdbc.support.GeneratedKeyHolder
 @Repository
 class CocktailRepository(@Autowired var namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
 
-    final val INSERT_COCKTAIL_SQL = "INSERT INTO COCKTAIL_DB.COCKTAIL (name,description,glass,category,alcoholic,img_link) VALUES (:name,:description,:glass,:category, :alcoholic, :image_link) "
+    final val INSERT_COCKTAIL_SQL = "INSERT INTO COCKTAIL_DB.COCKTAIL (name,description,glass,category,alcoholic,img_link, recipe) VALUES (:name,:description,:glass,:category, :alcoholic, :image_link,:recipe) "
 
     fun addCocktail(cocktail: Cocktail): Int {
 
@@ -23,6 +22,7 @@ class CocktailRepository(@Autowired var namedParameterJdbcTemplate: NamedParamet
         val keyHolder: GeneratedKeyHolder = GeneratedKeyHolder()
 
         val namedParameters = MapSqlParameterSource(hashMapOf(
+                "recipe" to cocktail.recipe,
                 "image_link" to cocktail.image_link,
                 "alcoholic" to cocktail.alcoholic,
                 "category" to cocktail.category.name,
@@ -36,10 +36,10 @@ class CocktailRepository(@Autowired var namedParameterJdbcTemplate: NamedParamet
         return keyHolder.key!!.toInt()
     }
 
-    val GET_COCKTAIL_SQL = "SELECT COCKTAIL.NAME  AS COCKTAILNAME,DESCRIPTION,GLASS,CATEGORY,INGREDIENT.NAME AS INGREDIENTNAME, AMOUNT FROM COCKTAIL JOIN COCKTAILHASINGREDIENT ON COCKTAIL.ID=COCKTAILHASINGREDIENT.COCKTAIL_ID JOIN INGREDIENT ON COCKTAILHASINGREDIENT.INGREDIENT_ID=INGREDIENT.ID WHERE COCKTAIL.ID=:cocktailid"
+    val GET_COCKTAIL_SQL = "SELECT COCKTAIL.NAME  AS COCKTAILNAME,DESCRIPTION,GLASS,CATEGORY,INGREDIENT.ID AS INGREDIENTID, AMOUNT,IMG_LINK,RECIPE FROM COCKTAIL JOIN COCKTAILHASINGREDIENT ON COCKTAIL.ID=COCKTAILHASINGREDIENT.COCKTAIL_ID JOIN INGREDIENT ON COCKTAILHASINGREDIENT.INGREDIENT_ID=INGREDIENT.ID WHERE COCKTAIL.ID=:cocktailid"
 
 
-    fun getCocktail(id: Int): Cocktail {
+    fun getCocktail(id: Int): Pair<Cocktail,List<Int>> {
         val namedParameters = MapSqlParameterSource(hashMapOf(
                 "cocktailid" to id
         ))
@@ -51,20 +51,20 @@ class CocktailRepository(@Autowired var namedParameterJdbcTemplate: NamedParamet
         }
         */
 
-        val ingredients = res.map { Ingredient(it.get("ingredientname").toString())}
-        val amounts = res.map { it.get("amount").toString() }
+        val ingredients = res.map { it.get("ingredientid").toString().toInt() }.toList()
+        val amounts = res.map { it.get("amount").toString() }.toList()
 
         val row = res.get(0)
-
-        //return Cocktail(Glass.valueOf(row.get("glass").toString()), row.get("cocktailname").toString(), ingredients, row.get("description").toString())
-        return Cocktail(row.get("cocktailname").toString(),Glass.valueOf(row.get("glass").toString()), Category( row.get("category").toString()), ingredients, amounts, row.get("description").toString())
+        val cocktail = Cocktail(row.get("cocktailname").toString(),Glass.valueOf(row.get("glass").toString()), Category( row.get("category").toString()), emptyList(), amounts, row.get("description").toString(), row.get("recipe").toString())
+        cocktail.image_link = row.get("img_link").toString()
+        return Pair(cocktail,ingredients)
     }
 
     val LOG = LoggerFactory.getLogger(CocktailRepository::class.java)
 
     //Todo optimize:
-    fun getCocktails(ids: List<Int>) : List<Cocktail> {
-        val res = emptyList<Cocktail>().toMutableList()
+    fun getCocktails(ids: List<Int>) : List<Pair<Cocktail,List<Int>>> {
+        val res = emptyList<Pair<Cocktail,List<Int>>>().toMutableList()
         for(id in ids){
             res.add(getCocktail(id))
         }
@@ -74,7 +74,7 @@ class CocktailRepository(@Autowired var namedParameterJdbcTemplate: NamedParamet
     //extremely shitty:
 
     val shittysql = "SELECT ID FROM COCKTAIL_DB.COCKTAIL"
-    fun getAll() : List<Cocktail>{
+    fun getAll() : List<Pair<Cocktail,List<Int>>>{
 
         val ids = namedParameterJdbcTemplate.queryForList(shittysql, MapSqlParameterSource()).map { it.get("id").toString().toInt() }
 

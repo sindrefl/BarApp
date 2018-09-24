@@ -16,10 +16,7 @@ import jdk.nashorn.internal.runtime.regexp.joni.ast.StringNode
 import org.slf4j.LoggerFactory
 
 @JsonDeserialize(using = IngredientDeserializer::class)
-data class Ingredient(var name : String){
-    var description : String? = null
-    var type : String? = null
-}
+data class Ingredient(var name : String, var description: String, var type : String, var isBattery: Boolean)
 
 val LOG = LoggerFactory.getLogger("ingredient")
 
@@ -27,6 +24,6 @@ class IngredientDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : S
     @Throws(IOException::class, JsonProcessingException::class)
     override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Ingredient {
         val node = jp.codec.readTree<TreeNode>(jp)
-        return Ingredient(node.toString())
+        return Ingredient(name=node.get("name").toString(), description=node.get("description").toString(), type=node.get("type").toString(), isBattery = node.get("battery").toString().equals("true"))
     }
 }

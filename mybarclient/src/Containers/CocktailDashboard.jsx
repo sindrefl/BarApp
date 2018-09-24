@@ -16,30 +16,31 @@ class CocktailDashboard extends Component {
             <div className="Main">
                  {this.props.randomDrink && <RandomDrinkCard
                     name={this.props.randomDrink.name}
-                    imageUrl={"http://localhost:8080/images/drinks/Whisky-Sour.jpg"}
+                    imageUrl={`http://localhost:8080/images/drinks/${this.props.randomDrink.name.replace(' ','_')}.jpg`}
+                    altUrl ={this.props.randomDrink.imageUrl}
                     description={this.props.randomDrink.description}
                     glass={this.props.randomDrink.glass}
                     ingredients={this.props.randomDrink.ingredients}
                     amounts ={this.props.randomDrink.amounts}
                     />
 }
-                {this.props.categories && <div className="Grid-container">
+                {this.props.glassTypes && <div className="Grid-container">
                     {this
                         .props
-                        .categories
-                        .map((category, index) => {
+                        .glassTypes
+                        .map((glass, index) => {
                             return <div>
-                                <Link to={`/category/${category.name}`}>
+                                <Link to={`/glass/${glass}`}>
                                     <CategoryCard
                                         id={index}
-                                        imageUrl={`http://localhost:8080/images/categories/${category.name}.jpg`}
-                                        description={category.description}
-                                        name={category.name}/>
+                                        imageUrl={`http://localhost:8080/images/glass/${glass}.jpg`}
+                                        name={glass}/>
                                 </Link>
 
                             </div>
                         })}
-                </div>}
+                        </div>
+                }
             </div>
         );
     }

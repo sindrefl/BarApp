@@ -20,14 +20,31 @@ class CocktailService(@Autowired var cocktailRepository: CocktailRepository, @Au
     }
 
     fun getCocktail(id :Int) : Cocktail {
-        return cocktailRepository.getCocktail(id)
+        val cocktailPair = cocktailRepository.getCocktail(id)
+        cocktailPair.first.ingredients = getIngredients(cocktailPair.second)
+        return cocktailPair.first
     }
-    fun getCocktails() : List<Cocktail>{
-        return cocktailRepository.getAll()
+    fun getCocktails() : List<Cocktail> {
+        val cocktailPairs = cocktailRepository.getAll()
+
+        val res = emptyList<Cocktail>().toMutableList()
+
+        for (pair in cocktailPairs) {
+            pair.first.ingredients = getIngredients(pair.second)
+            res.add(pair.first)
+        }
+        return res
     }
 
     fun getCocktails(ids : List<Int>) : List<Cocktail> {
-        return cocktailRepository.getCocktails(ids)
+        val cocktailPairs = cocktailRepository.getCocktails(ids)
+        val res = emptyList<Cocktail>().toMutableList()
+
+        for (pair in cocktailPairs) {
+            pair.first.ingredients = getIngredients(pair.second)
+            res.add(pair.first)
+        }
+        return res
     }
 
     fun getIngredient(id : Int) : Ingredient{

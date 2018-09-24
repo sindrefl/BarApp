@@ -6,15 +6,20 @@ import com.example.MyBarServer.Models.Glass
 import com.example.MyBarServer.Models.Ingredient
 import com.example.MyBarServer.Services.CSVService
 import com.example.MyBarServer.Services.CocktailService
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.web.bind.annotation.*
+import java.io.IOException
+import java.net.URL
+import java.nio.file.Files
+import java.nio.file.Paths
 import java.util.logging.Logger
 import javax.servlet.http.HttpServletResponse
 
 @RestController("/")
 class CocktailController(@Autowired var cocktailService: CocktailService, @Autowired var csvService: CSVService) {
 
-    val LOG = Logger.getLogger(this.javaClass.name)
+    val LOG = LoggerFactory.getLogger(CocktailController::class.java.name)
 
     @RequestMapping("/")
     fun home(): String{
@@ -24,7 +29,31 @@ class CocktailController(@Autowired var cocktailService: CocktailService, @Autow
     @PostMapping("/addDrink")
     @CrossOrigin("*")
     fun addDrink(@RequestBody cocktail: Cocktail){
+        if(cocktail.name.contains('*')){
+            cocktail.name = "Quick Fuck"
+        }
+        if(cocktail.name.contains("\"")){
+            cocktail.name = cocktail.name.replace("\"", "")
+        }
+        downloadImage(cocktail.image_link, cocktail.name.replace(' ', '_'))
         cocktailService.addCocktail(cocktail)
+    }
+
+
+    fun downloadImage(url: String?, name : String){
+        var fileName = name
+        if(url.isNullOrBlank()){
+            return
+        }
+        if(name.contains("/")){
+            fileName = name.replace("/","_")
+        }
+
+        try {
+            val image = URL(url).openStream().use({ input -> Files.copy(input, Paths.get("C:/Users/sindre.flood/Documents/MyBar/MyBarServer/target/classes/static/images/drinks/$fileName.jpg")) })
+        } catch (e : IOException) {
+            LOG.error("image failed: ${e.message}")
+        }
     }
 
 
@@ -32,29 +61,26 @@ class CocktailController(@Autowired var cocktailService: CocktailService, @Autow
     @CrossOrigin("*")
     fun index(): Cocktail{
 
-        val cocktail = Cocktail("Hardcoded Whisky Sour",Glass.HIGHBALL, Category("This is a category"), listOf(Ingredient("Whisky"), Ingredient("Sugar")), listOf("4cl", "4cl") ,"This is a whiskey sour")
 
-        return cocktail;
+        return cocktailService.getCocktail(1)
     }
 
     @GetMapping("/allDrinks")
     @CrossOrigin("*")
-    fun getDrinks() : List<Cocktail>{
+    fun getDrinks() : List<Cocktail> = cocktailService.getCocktails()
 
-
-        val all = cocktailService.getCocktails()
-
-
-
-        LOG.info(all.toString())
-        return all
-    }
 
 
     @GetMapping("/glassTypes")
     @CrossOrigin("*")
     fun getGlasses() : Array<Glass> {
         return Glass.values()
+    }
+
+    @GetMapping("/glassTypes/{length}")
+    @CrossOrigin("*")
+    fun getGlasses(@PathVariable length:Int) : List<Glass> {
+        return Glass.values().take(length)
     }
 
     @GetMapping("/categories")

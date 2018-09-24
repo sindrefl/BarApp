@@ -18,8 +18,8 @@ const JugSvg = props => {
   return(
   <svg
     xmlnsXlink="http://www.w3.org/1999/xlink"
-    width="400px"
-    height="400px"
+    width="15em"
+    height="15em"
     viewBox="0 0 210 297"
     {...props}
   >

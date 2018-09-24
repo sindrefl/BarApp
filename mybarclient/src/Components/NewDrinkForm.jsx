@@ -99,6 +99,9 @@ class NewDrinkForm extends Component {
                 <div className="modal-main">
                 { !this.state.submitted && <form>
                     FILL IN TO SUBMIT A NEW DRINK
+                    <div>
+                        <button className="right" onClick={this.props.handleClose}>X</button>
+                    </div>
                     <ul>
                         <li>
                             <input
@@ -161,7 +164,7 @@ class NewDrinkForm extends Component {
                     </ul>
 
                     <button type="submit" onClick={this.submitForm}>Click here to submit your drink</button>
-                    <button onClick={this.props.handleClose}>Close without submit</button>
+                    
                 </form>}
 
                 {this.state.submitted && <div>Your drink was submitted successfully <button onClick={this.props.handleClose}>Close</button></div>}

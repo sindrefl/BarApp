@@ -18,17 +18,26 @@ import java.sql.ResultSet
 class IngredientsRepository(@Autowired var namedParameterJdbcTemplate: NamedParameterJdbcTemplate) {
 
     val LOG = LoggerFactory.getLogger("com.example.IngredientRepository")
-    final val INSERT_INGREDIENT_SQL = "INSERT INTO COCKTAIL_DB.INGREDIENT (name) VALUES (:name) "
-
-
+    final val INSERT_INGREDIENT_SQL = "INSERT INTO COCKTAIL_DB.INGREDIENT (name,ing_description,type,isBattery) VALUES (:name,:description,:type,:battery) "
+    val SELECTBYNAMESQL = " SELECT ID FROM COCKTAIL_DB.INGREDIENT WHERE INGREDIENT.NAME=:name"
 
     fun addIngredient(ingredient: Ingredient): Int {
+
+        val already = namedParameterJdbcTemplate.queryForList(SELECTBYNAMESQL, MapSqlParameterSource(hashMapOf("name" to ingredient.name)))
+
+        if(!already.isEmpty()){
+
+            return already[0]["ID"].toString().toInt()
+        }
 
         val keyHolder = GeneratedKeyHolder()
 
         val namedParameters = MapSqlParameterSource(
                 hashMapOf(
-                        "name" to ingredient.name
+                        "name" to ingredient.name,
+                        "description" to ingredient.description,
+                        "battery" to ingredient.isBattery,
+                        "type" to ingredient.type
                 )
         )
 
@@ -48,6 +57,7 @@ class IngredientsRepository(@Autowired var namedParameterJdbcTemplate: NamedPara
 
     val INSERTINGREDIENTSSQL = "INSERT INTO COCKTAIL_DB.COCKTAILHASINGREDIENT (COCKTAIL_ID, INGREDIENT_ID, AMOUNT) VALUES (:cid,:iid,:amount)"
 
+
     fun addCocktailIngredients(amounts: List<String>, cocktail_id: Int, ingredient_ids: List<Int>) {
         if (amounts.size != ingredient_ids.size) throw IllegalStateException("Ingredient length and amounts do not match with ${amounts.size} and ${ingredient_ids.size}")
         for (i in 0..amounts.size - 1) {
@@ -55,10 +65,10 @@ class IngredientsRepository(@Autowired var namedParameterJdbcTemplate: NamedPara
         }
     }
 
-    val SELECT_INGREDIENT_SQL = "SELECT NAME FROM INGREDIENT WHERE INGREDIENT.ID=(:id)"
+    val SELECT_INGREDIENT_SQL = "SELECT NAME,ING_DESCRIPTION,TYPE,ISBATTERY FROM INGREDIENT WHERE INGREDIENT.ID=(:id)"
 
     fun getIngredient(id : Int) : Ingredient {
-        return namedParameterJdbcTemplate.queryForObject(SELECT_INGREDIENT_SQL, MapSqlParameterSource(hashMapOf("id" to id)), {rs, _ -> Ingredient(rs.getString("name").toString())})!!
+        return namedParameterJdbcTemplate.queryForObject(SELECT_INGREDIENT_SQL, MapSqlParameterSource(hashMapOf("id" to id)), {rs, _ -> Ingredient(rs.getString("name").toString(), rs.getString("ing_description"), rs.getString("type"), rs.getBoolean("isBattery"))})!!
     }
 
     fun getIngredients(ids : List<Int>) : List<Ingredient>{
@@ -73,7 +83,7 @@ class IngredientsRepository(@Autowired var namedParameterJdbcTemplate: NamedPara
         val res = emptyList<Ingredient>().toMutableList()
         val ingredientsMap = namedParameterJdbcTemplate.queryForList("SELECT NAME FROM INGREDIENT", MapSqlParameterSource())
         for (row in ingredientsMap){
-            res.add(Ingredient(row.get("name").toString()))
+            res.add(Ingredient(row.get("name").toString(),row.get("ing_description").toString(), row.get("type").toString(), row.get("isBattery").toString().equals("1")))
         }
         return res
     }

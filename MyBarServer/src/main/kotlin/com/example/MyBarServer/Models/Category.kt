@@ -18,9 +18,7 @@ val Log = LoggerFactory.getLogger(Category::class.java)
 class CategoryDeserializer @JvmOverloads constructor(vc: Class<*>? = null) : StdDeserializer<Category>(vc) {
     @Throws(IOException::class, JsonProcessingException::class)
     override fun deserialize(jp: JsonParser, ctxt: DeserializationContext): Category {
-        Log.info("THE DESEARLIZERASA")
         val node = jp.codec.readTree<TreeNode>(jp)
-        Log.info(node.toString())
-        return Category(node.toString())
+        return Category(name=node.get("name").toString())
     }
 }

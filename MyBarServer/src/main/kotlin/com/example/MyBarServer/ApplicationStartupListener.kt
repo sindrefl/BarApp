@@ -12,6 +12,10 @@ import org.springframework.context.ApplicationListener
 import org.springframework.context.event.ContextRefreshedEvent
 import org.springframework.context.event.EventListener
 import org.springframework.stereotype.Component
+import java.io.IOException
+import java.net.URL
+import java.nio.file.Files
+import java.nio.file.Paths
 
 @Component
 class ApplicationStartupListener : ApplicationListener<ContextRefreshedEvent> {
@@ -62,11 +66,11 @@ class ApplicationStartupListener : ApplicationListener<ContextRefreshedEvent> {
           //      ingredientMap.put(Ingredient(split[0].substring(split[0].indexOf(" ")).trim()), split[0].substring(0, split[0].indexOf(" ")))
 
                 amounts.add(split[0].substring(0, split[0].indexOf(" ")))
-                ingredients.add(Ingredient(split[0].substring(split[0].indexOf(" ")).trim()))
+                //ingredients.add(Ingredient(split[0].substring(split[0].indexOf(" ")).trim()))
             } else {
                 //ingredientMap.put(Ingredient(split[1].trim()), split[0].trim())
 
-                ingredients.add(Ingredient(split[1].trim()))
+                //ingredients.add(Ingredient(split[1].trim()))
                 amounts.add(split[0].trim())
             }
         }
@@ -77,7 +81,7 @@ class ApplicationStartupListener : ApplicationListener<ContextRefreshedEvent> {
         //LOG.info(ingredientMap.toString())
 
         //val cocktail = Cocktail(glass, name, ingredientMap, "")
-        val cocktail = Cocktail(name,glass, Category("HARDCODED"),ingredients,amounts, "")
+        val cocktail = Cocktail(name,glass, Category("HARDCODED"),ingredients,amounts, "","")
 
         cocktailService!!.addCocktail(cocktail)
     }
