@@ -5,7 +5,9 @@ class DrinkCard extends Component {
     render() {
         return (
             <div className="Card-Container">
-                <strong>{this.props.name}</strong>
+                <div>
+                    <h2>{this.props.name}</h2>
+                </div>
                 <div className="Drink-Card">
                     <img
                         width="200px"
@@ -15,10 +17,19 @@ class DrinkCard extends Component {
                 </div>
                 <div className="flex-horizontal-container">
                     <div className="flex-vertical">
-                        Served in a
-                        <strong>{this.props.glass}</strong>
-                        glass.
+                        Served in a 
+                        <strong> {this.props.glass} </strong>
+                         glass.
                         <div className="flex-horizontal-container">
+                            <div>
+                                <ul>
+                                    {this
+                                        .props
+                                        .amounts
+                                        .map(amount => <li>{amount}</li>)}
+
+                                </ul>
+                            </div>
                             <div>
                                 <ul>
                                     {this
@@ -27,14 +38,6 @@ class DrinkCard extends Component {
                                         .map(ingredient => <li>
                                             {ingredient.name}</li>)
 }
-                                </ul>
-                            </div>
-                            <div>
-                                <ul>
-                                    {this
-                                        .props
-                                        .amounts
-                                        .map(amount => <li>{amount}</li>)}
                                 </ul>
                             </div>
                         </div>

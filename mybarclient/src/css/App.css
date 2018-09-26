@@ -1,8 +1,10 @@
 @import url('https://fonts.googleapis.com/css?family=Indie+Flower');
+@import url('https://fonts.googleapis.com/css?family=Merriweather');
 
 .App {
   text-align: center;
   background: rgb(212, 209, 209);
+  font-family: Indie Flower; 
 }
 
 .App-logo {
@@ -17,8 +19,18 @@
   font-size: 32px;
   color: red;
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+}
+
+.right-header{
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: row;
+}
+
+.left-header{
+  justify-content: flex-start;
 }
 
 .header-item{
@@ -45,11 +57,11 @@
 }
 
 
+
 .Random-Card-Container{
   margin: 2em;
   display: flex;
   flex-direction: column;
-  font-family: Indie Flower; 
 }
 
 .horizontal-list{
@@ -78,12 +90,25 @@
   box-shadow: 5px 10px rgb(100,100,10,0.7);
 }
 
+
 .Card-Container{
   margin: 2em;
   padding : 2em;
   background: rgb(230, 224, 224);
   border-radius: 2em;
   color : #fff;
+  font-family: Indie Flower; 
+  width: 18em;
+  height: 30em;
+}
+
+.Category-Card-Container{
+  margin: 2em;
+  padding : 2em;
+  background: rgb(230, 224, 224);
+  border-radius: 2em;
+  color : #fff;
+  font-family: Merriweather
 }
 
 .Drink-Card{
@@ -105,11 +130,44 @@
 
 }
 
+li{
+  list-style-type: none
+}
 
-.Grid-container{
+h1{
+  font-size: 36px
+}
+
+h2{
+  font-size: 28px
+}
+
+.input-text{
+  margin: 1em;
+  padding: 1em;
+}
+
+.Grid-header{
+  padding: 2em;
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  background: #aaaaaa;
+  border-radius: 2em;
+  height: 5em;
+}
+
+.Grid{
   display: flex;
   flex-wrap: wrap;
   justify-content: space-around;
+  padding: 2em;
+}
+
+
+.Grid-container{
+  background: #fff;
+  margin: 2em;
 }
 
 @keyframes App-logo-spin {

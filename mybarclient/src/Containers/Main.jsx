@@ -19,7 +19,7 @@ class Main extends Component {
         super(props);
         this.state = {
             randomDrink: undefined,
-            categories: ['Hardcoded Long', 'Hardcoded Short', 'Mock'],
+            categories: [],
             allDrinks: undefined,
             glassTypes : []
         }
@@ -37,7 +37,7 @@ class Main extends Component {
                 console.log(error);
             });
         axios
-            .get('http://localhost:8080/categories')
+            .get('http://localhost:8080/categories/3')
             .then((response) => {
                 let categoryList = response.data;
                 this.setState({categories: categoryList});
@@ -49,9 +49,8 @@ class Main extends Component {
             .get('http://localhost:8080/allDrinks')
             .then((response) => {
                 this.setState({allDrinks: response.data})
-                console.log(response.data[0])
             });
-        axios.get('http://localhost:8080/glassTypes/10').then((response) => {
+        axios.get('http://localhost:8080/glassTypes/9').then((response) => {
             this.setState({glassTypes : response.data})
         }).catch(error => {
             console.log(error)
@@ -66,8 +65,7 @@ class Main extends Component {
 
             <Switch>
             <Route path="/" exact render= {() => <CocktailDashboard randomDrink={this.state.randomDrink} categories={this.state.categories} allDrinks={this.state.allDrinks} glassTypes={this.state.glassTypes}/>}></Route>
-            <Route path="/glass/:name/:id" render={({match}) => <DrinkCard name={match.params.name} ></DrinkCard>} ></Route>
-            <Route path="/glass/:name" render={({match}) => <CategoryList match={match} drinks={this.state.allDrinks}></CategoryList>}></Route>
+            <Route path="/filtered/:query" render={({match}) => <CategoryList url={match} drinks={this.state.allDrinks}></CategoryList>}></Route>
             <Route path="/home/bar" render={() => <MyBarPage></MyBarPage>}></Route>
             </Switch>
             </div>

@@ -3,10 +3,10 @@ import React, { Component } from 'react';
 class CategoryCard extends Component {
   render() {
     return (
-        <div className="Card-Container">
-          <strong>{this.props.name}</strong>
+        <div className="Category-Card-Container">
+          <h2>{this.props.name}</h2>
           <div className="Drink-Card">
-            <img width="200px" height="200px" src={this.props.imageUrl}></img>
+            <img width="200px" height="200px" src={this.props.imageUrl} alt="Error, no image found"></img>
           </div>
           <div>
             {this.props.description}

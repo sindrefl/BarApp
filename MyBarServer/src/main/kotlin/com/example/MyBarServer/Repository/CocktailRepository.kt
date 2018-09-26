@@ -80,4 +80,25 @@ class CocktailRepository(@Autowired var namedParameterJdbcTemplate: NamedParamet
 
         return getCocktails(ids)
     }
+
+    fun getMinMax() : Pair<Int,Int> {
+        val ids = namedParameterJdbcTemplate.queryForList(shittysql, MapSqlParameterSource()).map { it.get("id").toString().toInt() }
+
+        return Pair(ids[0], ids.size)
+    }
+
+    val Categorysql = "SELECT DISTINCT CATEGORY FROM COCKTAIL_DB.COCKTAIL"
+    fun getCategories() : List<Category>  {
+        return namedParameterJdbcTemplate.queryForList(Categorysql, MapSqlParameterSource()).map { Category(name=it.get("category").toString()) }
+
+    }
+
+
+    fun getIdsFromFilter(params : List<Pair<String,String>>) : List<Int>{
+        val sql = "SELECT ID FROM COCKTAIL_DB.COCKTAIL WHERE " + params.map { it.first + " LIKE ('%" + it.second + "%')" }.joinToString(" AND ")
+        LOG.info(sql)
+        val ids = namedParameterJdbcTemplate.queryForList(sql, MapSqlParameterSource()).map { it.get("id").toString().toInt()}
+        return ids
+    }
+
 }

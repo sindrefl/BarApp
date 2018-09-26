@@ -26,6 +26,8 @@ class CocktailController(@Autowired var cocktailService: CocktailService, @Autow
         return "This is the home"
     }
 
+
+
     @PostMapping("/addDrink")
     @CrossOrigin("*")
     fun addDrink(@RequestBody cocktail: Cocktail){
@@ -60,9 +62,8 @@ class CocktailController(@Autowired var cocktailService: CocktailService, @Autow
     @GetMapping("/random")
     @CrossOrigin("*")
     fun index(): Cocktail{
-
-
-        return cocktailService.getCocktail(1)
+        cocktailService.updateRandomCocktail()
+        return cocktailService.randomCocktail
     }
 
     @GetMapping("/allDrinks")
@@ -70,6 +71,9 @@ class CocktailController(@Autowired var cocktailService: CocktailService, @Autow
     fun getDrinks() : List<Cocktail> = cocktailService.getCocktails()
 
 
+    @GetMapping("/filteredDrinks/{searchString}")
+    @CrossOrigin("*")
+    fun getFiltered(@PathVariable searchString : String) = cocktailService.getFilteredDrinkList(searchString)
 
     @GetMapping("/glassTypes")
     @CrossOrigin("*")
@@ -86,7 +90,13 @@ class CocktailController(@Autowired var cocktailService: CocktailService, @Autow
     @GetMapping("/categories")
     @CrossOrigin("*")
     fun getCategories() : List<Category> {
-        return emptyList()
+        return cocktailService.getCategories()
+    }
+
+    @GetMapping("/categories/{length}")
+    @CrossOrigin("*")
+    fun getCategories(@PathVariable length: Int) : List<Category> {
+        return cocktailService.getCategories().take(length)
     }
 
     @RequestMapping("/cocktails.csv")

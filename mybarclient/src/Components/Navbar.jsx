@@ -20,7 +20,13 @@ this.setState({ showAddNewDrink: false });
 
   render() {
     return (
-        <header className="App-header">
+        <header className="App-header"> 
+        <div className="left-header">
+        <div className="header-item">
+        <Link to={"/"}><img className="icon" src={require("../assets/home.png")}></img></Link>
+        </div>
+        </div>
+        <div className="right-header">
         <div className="header-item">
           <img className="icon clickable" src={require("../assets/plus.png")} onClick={this.showModal}></img>
         </div>
@@ -31,6 +37,7 @@ this.setState({ showAddNewDrink: false });
             </div>
             <div className="header-item">
           <Link to={"/home/bar"}><img className="icon" src={require("../assets/profile4.png")}></img></Link>
+        </div>
         </div>
         </header>
     );
